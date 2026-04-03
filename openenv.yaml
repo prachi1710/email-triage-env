@@ -1,0 +1,95 @@
+name: email-triage-env
+description: AI system for classifying and responding to emails using reinforcement learning
+version: 1.0
+
+# -----------------------------
+# Observation Space (State)
+# -----------------------------
+observation_space:
+  type: object
+  properties:
+    subject:
+      type: string
+    email_text:
+      type: string
+    sender:
+      type: string
+    task_type:
+      type: string
+      enum: [easy, medium, hard]
+
+# -----------------------------
+# Action Space
+# -----------------------------
+action_space:
+  type: object
+  properties:
+    category:
+      type: string
+      enum: [support, spam, sales, personal]
+    priority:
+      type: string
+      enum: [low, medium, high]
+    action:
+      type: string
+      enum: [reply, archive, ignore]
+    response:
+      type: string
+
+# -----------------------------
+# Reward Definition
+# -----------------------------
+reward:
+  type: float
+  range: [0.0, 1.0]
+  description: |
+    Reward is computed based on:
+      - Category match (0.4)
+      - Priority match (0.2)
+      - Action match (0.2)
+      - Response quality (0.2)
+    Penalties:
+      - Empty response (-0.1)
+      - Invalid category (-0.1)
+
+# -----------------------------
+# Tasks
+# -----------------------------
+tasks:
+  - name: easy
+    description: Clear intent emails (spam, simple support)
+    difficulty: low
+
+  - name: medium
+    description: Moderately ambiguous emails requiring reasoning
+    difficulty: medium
+
+  - name: hard
+    description: Noisy, unstructured, ambiguous emails
+    difficulty: high
+
+# -----------------------------
+# Episode Definition
+# -----------------------------
+episode:
+  max_steps: 1
+  termination: single_step
+
+# -----------------------------
+# Grader
+# -----------------------------
+grader:
+  type: deterministic
+  description: |
+    Compares agent output with ground truth.
+    Computes score between 0.0 and 1.0 based on matching fields.
+
+# -----------------------------
+# Metadata
+# -----------------------------
+tags:
+  - openenv
+  - reinforcement-learning
+  - email-triage
+  - classification
+  - automation
